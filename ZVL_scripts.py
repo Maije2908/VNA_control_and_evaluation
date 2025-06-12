@@ -3,13 +3,54 @@
 author: Maier Christoph
 date: 12.06.2025
 
-This script is used for the evaluation of measurement data measured with an VNA.
-The data has to be present in .DAT format (1st column is the frequency, 
-2nd column the magnitude and 3rd column the phase)
+This module is a selection of functions for the control of the ZVL VNA, and the 
+manipulation of the generate measurement data.
 """
 
+# import needed packages
 import numpy as np
 import matplotlib.pyplot as plt
+
+# definition of constants
+eps = np.finfo(np.float64).eps # define epsilon (a very small number)
+
+# set default values of the variables
+ShowCMD = False # Flag if output in the command line should be shown
+ShowdB = False # Flag if results should be given in dB
+
+
+'''
+    This function sets the global ShowCMD flag. The flag controls, if results
+    will be shown in the command line. 
+    
+    Input Parameters:
+        None
+    
+    Output parameters:
+        None
+'''
+def set_showCMD():
+    global ShowCMD
+    ShowCMD = True
+
+
+
+'''
+    This function resets sets the global ShowCMD flag. The flag controls, if
+    results will be shown in the command line. 
+    
+    Input Parameters:
+        None
+    
+    Output parameters:
+        None
+'''
+def reset_showCMD():
+    global ShowCMD
+    ShowCMD = False
+
+
+
 
 """
 input variable: *filename
