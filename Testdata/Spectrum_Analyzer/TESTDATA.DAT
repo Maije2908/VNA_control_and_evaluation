@@ -1,0 +1,29 @@
+Type;ZVL-3;
+Version;3.31;
+Date;23.May 25;
+Mode;ANALYZER;
+Center Freq;5004500.000000;Hz
+Freq Offset;0.000000;Hz
+Span;9991000.000000;Hz
+x-Axis;LIN;
+Start;9000.000000;Hz
+Stop;10000000.000000;Hz
+Ref Level;-20.000000;dBm
+Level Offset;0.000000;dB
+Ref Position;100.000000;%
+y-Axis;LOG;
+Level Range;100.000000;dB
+Rf Att;0.000000;dB
+RBW;300.000000;Hz
+VBW;1000.000000;Hz
+SWT;110.000000;s
+Trace Mode;CLR/WRITE;
+Detector;AUTOPEAK;
+Sweep Count;0;
+Trace 1:;;
+x-Unit;Hz;
+y-Unit;dBm;
+Preamplifier;OFF;
+Transducer;OFF;
+Values;2001;
+9000;-73.195846557617187;-106.47621154785156

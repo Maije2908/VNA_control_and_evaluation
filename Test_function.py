@@ -13,23 +13,9 @@ import ZVL_scripts as ZVL
 
 if __name__ =='__main__':
         
-    # ntwk_1 = rf.Network('exam_1.s4p') # 4-port, 4001 pnt
-    # ntwk_2 = rf.Network('exam_2.s4p') # 4-port, 4001 pnt
-    # ntwk_3 = rf.Network('exam_3.s4p') # 4-port, 3995 pnt
-    # ntwk_4 = rf.Network('exam_4.s2p') # 2-port, 4001 pnt
-    # ntwk_5 = rf.Network('exam_5.s4p') # empty
-        
-    # path = 'a1'
+    filename = 'Testdata/Spectrum_Analyzer/TESTDATA.dat'
+    autopeak = 0
     
-    # ntwk = netman.ZNAExtraction(path)
-    
-    
-    # ShowdB = 0
-        
-    # netman.set_showCMD() 
-    # netman.set_showdB()
-
-       
-    # a, b = netman.CalcSParameterNMSE(ntwk_1, ntwk_2)
+    a = ZVL.read_dat_file_spec(filename, autopeak)
 
     
