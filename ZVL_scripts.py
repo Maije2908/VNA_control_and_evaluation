@@ -33,8 +33,9 @@ ShowdB = False # Flag if results should be given in dB
     Methods:
         None
 """
-class MixedModeParameter:
-    def __init__(self, frequency, value, value_AP):
+class ZVL_settings:
+    def __init__(self, dev_device, dev_version, dev_date, dev_mode,
+                 dev_center_freq, dev_center_unit):
         
         """
         Initializes the MixedModeParameter class by combining the real and
@@ -49,10 +50,10 @@ class MixedModeParameter:
         Each S-parameter is represented as a list of complex numbers
         corresponding to each frequency point.
         """
-        self.frequency = frequency
-        self.value = value
-        self.value_AP = value_AP
-
+        self.device = dev_device
+        self.version = dev_version
+        self.date = dev_date
+        self.mode = dev_mode
 
 
 
@@ -127,18 +128,54 @@ def read_dat_file_spec(filename, autopeak):
                 row = [str(x) for x in line.split(';')]
                 header.append(row)
                 
+        print(header)
+        
+        # Assuming the header is always the same and will stay the same forever
+        dev_type = header[0][1]
+        dev_version = header[1][1]
+        dev_date = header[2][1]
+        dev_mode = header[3][1]
+        dev_center_freq = header[4][1]
+        dev_center_unit= header[4][2] 
+        dev_offset = header[5][1]
+        dev_offset_unit = header[5][2]
+        dev_span = header[6][1]
+        dev_span_unit = header[6][2]
+        dev_xAx_type = header[7][1]
+        dev_xAx_start = header[8][1]
+        dev_xAx_start_unit = header[8][2]
+        dev_xAx_stop = header[9][1]
+        dev_xAx_stop_unit = header[9][2]
+        dev_reflvl = header[10][1]
+        dev_reflvl_unit = header[10][2]
+        dev_offsetlvl = header[11][1]
+        dev_offsetlvl_unit = header[11][2]
+        dev_refpos = header[12][1]
+        dev_refpos_unit = header[12][2]
+        dev_yAx_type = header[13][1]
+        dev_rangelvl = header[14][1]
+        dev_rangelvl_unit = header[14][2]
+        dev_rfatt = header[15][1]
+        dev_rfatt_unit = header[15][2]
+        dev_RBW = header[16][1]
+        dev_RBW_unit = header[16][2]
+        dev_VBW = header[17][1]
+        dev_VBW_unit = header[17][2]
+        dev_SWT = header[18][1]
+        dev_SWT_unit = header[18][2]
+        dev_trace_mode = header[19][1]
+        dev_detector = header[20][1]
+        dev_sweep_cnt = header[21][1]
+        
+        
+        dev_trace_1 = header[22][1]
+        
+        print(dev_trace_1)
+        
+        settings = ZVL_settings(dev_type, dev_version, dev_date, dev_mode, 
+                                dev_center_freq, dev_center_unit)
                 
-        for line in header:
-            for element in line:
-                
-            print(line)
-                
-        return np.array(data)
-    
-    
-    
-    
-    
+        return settings   
     
     
     
