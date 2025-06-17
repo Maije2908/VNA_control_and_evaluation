@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 author: Maier Christoph
-date: 12.06.2025
+date: 17.06.2025
 
 This module is a selection of functions for the control of the ZVL VNA, and the 
 manipulation of the generate measurement data.
@@ -20,41 +20,117 @@ ShowdB = False # Flag if results should be given in dB
 
 
 """
-    A class to represent mixed-mode S-parameters (scattering parameters) for 
-    a network over a range of frequencies. Mixed-mode parameters are a special
-    kind of S-parameters, calculating the response to differential-mode (DM) 
-    and common-mode (CM) signals. 
+    A class to allow easy access to the measurement settings of the ZVL. The
+    description of the attributes is taken from the ZVL manual
+    (ASCII file export format).
 
     Attributes:
-        frequency (list): A list of the frequency points.
-        value (list): 
-        value_AP (list): 
+        dev_type (string): Instrument model
+        version (string): Firmware version
+        date (string): Date of data set storage
+        mode (string): Instrument mode
+        center_freq (float): Center frequency (value)
+        center_unit (string): Center frequency (unit)
+        offset (float): Frequency offset (value)
+        offset_unit (string): Frequency offset (unit)
+        span (float): Frequency range (value)
+        span_unit (string): Frequency range (unit)
+        xAx_type (string): Scaling of x-axis (linear (LIN) or logarithmic (LOG))
+        xAx_start (float): Start frequency of the display range (value)
+        xAx_start_unit (string): Start frequency of the display range (unit)
+        xAx_stop (float): Stop frequency of the display range (value)
+        xAx_stop (string): Stop frequency of the display range (unit)
+        reflvl (float): Reference level (value)
+        reflvl_unit (string): Reference level (unit)
+        offsetlvl (float): Level Offset (value)
+        offsetlvl_unit (string): Level Offset (unit)
+        refpos (float): Position of reference level reffered to diagram limits (value)
+        refpos_unit (string): Position of reference level reffered to diagram limits (unit)
+        yAx_type (string): Scaling of y-axis (linear (LIN) or logarithmic (LOG))
+        rangelvl (float): Display range in y direction (value)
+        rangelvl_unit (string): Display range in y direction (unit)        
+        rfatt (float): Input attenuation (value)
+        rfatt_unit (string): Input attenuation (unit)
+        RBW (float): Resolution bandwidth (value)
+        RBW_unit (string): Resolution bandwidth (unit)
+        VBW (float): Video bandwidth (value)
+        VBW_unit (string): Video bandwidth (unit)
+        SWT (float): Sweep time (value)
+        SWT_unit (string): Sweep time (unit)
+        trace_mode (string): Display mode of trace
+        detector (string): Detector setting
+        sweep_cnt (int): Number of sweeps set
 
     Methods:
         None
 """
-class ZVL_settings:
-    def __init__(self, dev_device, dev_version, dev_date, dev_mode,
-                 dev_center_freq, dev_center_unit):
+class ZVL_device_setting:
+    def __init__(self, dev_type, version, date, mode, center_freq, center_unit,
+                 offset, offset_unit, span, span_unit, xAx_type, xAx_start,
+                 xAx_start_unit, xAx_stop, xAx_stop_unit, reflvl, reflvl_unit,
+                 offsetlvl, offsetlvl_unit, refpos, refpos_unit, yAx_type,
+                 rangelvl, rangelvl_unit, rfatt, rfatt_unit, RBW, RBW_unit,
+                 VBW, VBW_unit, SWT, SWT_unit, trace_mode, detector, sweep_cnt):
         
-        """
-        Initializes the MixedModeParameter class by combining the real and
-        imaginary parts of the S-parameters into lists of complex numbers for
-        each parameter.
-    
-        Parameters:
-            frequency (list): A list of frequency points.
-            sdd11_re, sdd11_im, ..., scc22_im (list): Real and imaginary parts
-                                                    of the S-parameters.
-    
-        Each S-parameter is represented as a list of complex numbers
-        corresponding to each frequency point.
-        """
-        self.device = dev_device
-        self.version = dev_version
-        self.date = dev_date
-        self.mode = dev_mode
+        self.dev_type = dev_type
+        self.version = version
+        self.date = date
+        self.mode = mode
+        self.center_freq = float(center_freq)
+        self.center_unit = center_unit
+        self.offset = float(offset)
+        self.offset_unit = offset_unit
+        self.span = float(span)
+        self.span_unit = span_unit
+        self.xAx_type = xAx_type
+        self.xAx_start = float(xAx_start)
+        self.xAx_start_unit = xAx_start_unit
+        self.xAx_stop = float(xAx_stop)
+        self.xAx_stop_unit = xAx_stop_unit
+        self.reflvl = float(reflvl)
+        self.reflvl_unit = reflvl_unit
+        self.offsetlvl = float(offsetlvl)
+        self.offsetlvl_unit = offsetlvl_unit
+        self.refpos = float(refpos)
+        self.refpos_unit = refpos_unit
+        self.yAx_type = yAx_type
+        self.rangelvl = float(rangelvl)
+        self.rangelvl_unit = rangelvl_unit
+        self.rfatt = float(rfatt)
+        self.rfatt_unit = rfatt_unit
+        self.RBW = float(RBW)
+        self.RBW_unit = RBW_unit
+        self.VBW = float(VBW)
+        self.VBW_unit = VBW_unit
+        self.SWT = float(SWT)
+        self.SWT_unit = SWT_unit
+        self.trace_mode = trace_mode
+        self.detector = detector
+        self.sweep_cnt = int(sweep_cnt)
+        
+        
+"""
+    A class to allow easy access to the trace settings of the ZVL for a one
+    trace measurements.
 
+    Attributes:
+        x_unit (string): Unit of the x values
+        y_unit (string): Unit of the y values
+        preamp (string): Preamplifier present
+        transducer (string): Transducer present
+        meas_number (int): Number of measurement points
+
+    Methods:
+        None
+"""        
+class ZVL_trace:
+    def __init__(self, x_unit, y_unit, preamp, transducer, meas_number):
+        
+        self.x_unit = x_unit
+        self.y_unit = y_unit
+        self.preamp = preamp
+        self.transducer = transducer
+        self.meas_number = int(meas_number)        
 
 
 '''
@@ -88,35 +164,33 @@ def reset_showCMD():
     ShowCMD = False
 
 
-
-
-
-
-
 '''
-    This function reads the 
-
-    This function calculates the normalized mean-square error (NMSE) of two
-    S-parameter objects by comparing the transmission and the reflection
-    coefficients separately.
+    This function reads a .dat file for a spectrum analyzer measurement with 
+    one trace. It uses the ZVL device and ZVL trace class to give the 
+    settings of the instrument and the trace. 
     
     Input Parameters:
-        SComp   network object of the S-parameter block which is
-                compared to the reference one
-        SRef    network object used as reference. The frequency grid
-                and the number of ports of the two S-parameter objects
-                must be the same
-                If this variable is left empty, a comparison to a
-                infinitesimally small, perfecly matched line
+        filename    string which stores the filename (including path) of the
+                    .dat file
+        autopeak    flag which indicates if the autopeak setting was set.
+                    Autopeak adds another output (yval2), which gives the
+                    smallest of the two measured values (see ZVL manual)
     
     Output parameters:
-        NMSERef     Calculated NMSE for the reflection coefficients 
-        NMSETrans   Calculated NMSE for the transmission coefficients
+        device_setting    The settings of the instrument (using ZVL device class)
+        trace_setting     The settings of the trace (using ZVL trace class)
+        frequency         vector (list) containing the frequency points
+        yval1             vector (list) containing the measurement values
+        yval2             vector (list) contining the smallest of the two values
+                          (only if AUTOPEAK is enabled, otherwise emtpy)
 '''
-def read_dat_file_spec(filename, autopeak):
+def read_dat_1trace_spec(filename, autopeak):
     
     data = []
     header = []
+    frequency = []
+    yval1 = []
+    yval2 = []
     
     with open(filename, 'r') as file:
         for line in file:
@@ -127,117 +201,72 @@ def read_dat_file_spec(filename, autopeak):
             else:
                 row = [str(x) for x in line.split(';')]
                 header.append(row)
-                
-        print(header)
         
-        # Assuming the header is always the same and will stay the same forever
-        dev_type = header[0][1]
-        dev_version = header[1][1]
-        dev_date = header[2][1]
-        dev_mode = header[3][1]
-        dev_center_freq = header[4][1]
-        dev_center_unit= header[4][2] 
-        dev_offset = header[5][1]
-        dev_offset_unit = header[5][2]
-        dev_span = header[6][1]
-        dev_span_unit = header[6][2]
-        dev_xAx_type = header[7][1]
-        dev_xAx_start = header[8][1]
-        dev_xAx_start_unit = header[8][2]
-        dev_xAx_stop = header[9][1]
-        dev_xAx_stop_unit = header[9][2]
-        dev_reflvl = header[10][1]
-        dev_reflvl_unit = header[10][2]
-        dev_offsetlvl = header[11][1]
-        dev_offsetlvl_unit = header[11][2]
-        dev_refpos = header[12][1]
-        dev_refpos_unit = header[12][2]
-        dev_yAx_type = header[13][1]
-        dev_rangelvl = header[14][1]
-        dev_rangelvl_unit = header[14][2]
-        dev_rfatt = header[15][1]
-        dev_rfatt_unit = header[15][2]
-        dev_RBW = header[16][1]
-        dev_RBW_unit = header[16][2]
-        dev_VBW = header[17][1]
-        dev_VBW_unit = header[17][2]
-        dev_SWT = header[18][1]
-        dev_SWT_unit = header[18][2]
-        dev_trace_mode = header[19][1]
-        dev_detector = header[20][1]
-        dev_sweep_cnt = header[21][1]
-        
-        
-        dev_trace_1 = header[22][1]
-        
-        print(dev_trace_1)
-        
-        settings = ZVL_settings(dev_type, dev_version, dev_date, dev_mode, 
-                                dev_center_freq, dev_center_unit)
-                
-        return settings   
+    # Assuming the header is always the same and will stay the same forever
+    # Device settings
+    dev_type = header[0][1]
+    dev_version = header[1][1]
+    dev_date = header[2][1]
+    dev_mode = header[3][1]
+    dev_center_freq = header[4][1]
+    dev_center_unit= header[4][2] 
+    dev_offset = header[5][1]
+    dev_offset_unit = header[5][2]
+    dev_span = header[6][1]
+    dev_span_unit = header[6][2]
+    dev_xAx_type = header[7][1]
+    dev_xAx_start = header[8][1]
+    dev_xAx_start_unit = header[8][2]
+    dev_xAx_stop = header[9][1]
+    dev_xAx_stop_unit = header[9][2]
+    dev_reflvl = header[10][1]
+    dev_reflvl_unit = header[10][2]
+    dev_offsetlvl = header[11][1]
+    dev_offsetlvl_unit = header[11][2]
+    dev_refpos = header[12][1]
+    dev_refpos_unit = header[12][2]
+    dev_yAx_type = header[13][1]
+    dev_rangelvl = header[14][1]
+    dev_rangelvl_unit = header[14][2]
+    dev_rfatt = header[15][1]
+    dev_rfatt_unit = header[15][2]
+    dev_RBW = header[16][1]
+    dev_RBW_unit = header[16][2]
+    dev_VBW = header[17][1]
+    dev_VBW_unit = header[17][2]
+    dev_SWT = header[18][1]
+    dev_SWT_unit = header[18][2]
+    dev_trace_mode = header[19][1]
+    dev_detector = header[20][1]
+    dev_sweep_cnt = header[21][1]
     
+    # Settings of the trace
+    x_unit = header[23][1]
+    y_unit = header[24][1]
+    preamp = header[25][1]
+    transducer = header[26][1]
+    meas_number = header[27][1]
     
-    
-            
-# if __name__ =='__main__':
-#     # define files to evaluate
-#     filepath = 'Spectrum_Analyzer/'
-    
-#     filename_1MHz = ['Noise_9kHz-1MHz.DAT',
-#                      'Vin_150V_no_load_9kHz-1MHz.DAT',
-#                      'Vin_150V_15mA_9kHz-1MHz.DAT',
-#                      'Vin_150V_50mA_9kHz-1MHz.DAT',
-#                      'Vin_150V_100mA_9kHz-1MHz.DAT',
-#                      'Vin_150V_200mA_9kHz-1MHz.DAT']
+    device_setting = ZVL_device_setting(dev_type, dev_version, dev_date, dev_mode, 
+                            dev_center_freq, dev_center_unit, dev_offset,
+                            dev_offset_unit, dev_span, dev_span_unit,
+                            dev_xAx_type, dev_xAx_start, dev_xAx_start_unit,
+                            dev_xAx_stop, dev_xAx_stop_unit, dev_reflvl,
+                            dev_reflvl_unit, dev_offsetlvl, dev_offsetlvl_unit,
+                            dev_refpos, dev_refpos_unit, dev_yAx_type,
+                            dev_rangelvl, dev_rangelvl_unit, dev_rfatt,
+                            dev_rfatt_unit, dev_RBW, dev_RBW_unit,
+                            dev_VBW, dev_VBW_unit, dev_SWT, dev_SWT_unit,
+                            dev_trace_mode, dev_detector, dev_sweep_cnt)
 
-#     filename_10MHz = ['Noise_9kHz-10MHz.DAT',
-#                       'Vin_150V_no_load_9kHz-10MHz.DAT',
-#                       'Vin_150V_15mA_9kHz-10MHz.DAT',
-#                       'Vin_150V_50mA_9kHz-10MHz.DAT',
-#                       'Vin_150V_100mA_9kHz-10MHz.DAT',
-#                       'Vin_150V_200mA_9kHz-10MHz.DAT']
+    trace_setting = ZVL_trace(x_unit, y_unit, preamp,
+                                      transducer, meas_number)
     
-#     value_1MHz = []
-#     value_10MHz = []
-     
-#     for file in filename_1MHz:
-#         value_1MHz.append(read_input(filepath + file))
+    for cnt in range(len(data)):
+        frequency.append(data[cnt][0])
+        yval1.append(data[cnt][1])
         
-#     for file in filename_10MHz:
-#         value_10MHz.append(read_input(filepath + file))
-
-        
-#     # creating plot
-#     fig = plt.figure()
-
-#     for cnt in range(len(value_1MHz)):
-#         #plt.semilogx(value_1MHz[cnt][:,0], value_1MHz[cnt][:,1])
-#         plt.semilogx(value_1MHz[cnt][:,0], value_1MHz[cnt][:,2])
-        
-#     plt.title('Disturbances for 9kHz to 1MHz')
-#     plt.xlabel('Frequency in Hz')
-#     plt.ylabel('dBm')
-#     plt.legend(['noise','0mA','15mA','50mA','100mA','200mA'])
-#     plt.xlim(min(value_1MHz[0][:,0]), max(value_1MHz[0][:,0]))
-#     plt.grid(which='both', axis='both')
-       
-#     plt.tight_layout()
-#     plt.show
-    
-#     # creating plot
-#     fig = plt.figure()
-
-#     for cnt in range(len(value_10MHz)):
-#         #plt.semilogx(value_10MHz[cnt][:,0], value_10MHz[cnt][:,1])
-#         plt.semilogx(value_10MHz[cnt][:,0], value_10MHz[cnt][:,2])
-        
-#     plt.title('Disturbances for 9kHz to 10MHz')
-#     plt.xlabel('Frequency in Hz')
-#     plt.legend(['noise','0mA','15mA','50mA','100mA','200mA'])
-#     plt.xlim(min(value_10MHz[0][:,0]), max(value_10MHz[0][:,0]))
-#     plt.grid(which='both', axis='both')
-       
-#     plt.tight_layout()
-#     plt.show
-    
+        if autopeak == 1:
+            yval2.append(data[cnt][2])
+                            
+    return [device_setting, trace_setting, frequency, yval1, yval2]
