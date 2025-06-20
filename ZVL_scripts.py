@@ -270,3 +270,84 @@ def read_dat_1trace_spec(filename, autopeak):
             yval2.append(data[cnt][2])
                             
     return [device_setting, trace_setting, frequency, yval1, yval2]
+
+
+
+'''
+    This function takes the filename of multiple .dat file from a 1 trace
+    spectrum analyzer measurement, extracts the data and stores them in a
+    matrix. It uses the function 'read_dat_1trace_spec' for the extraction of
+    the data.
+    
+    Input Parameters:
+        filename        string which stores the filename of the .csv file
+        filepath        filepath for the stored data
+        autopek         flag which indicates if the AUTOPEAK option was used. 
+                        
+    Output parameters:
+        device_setting    The settings of the instrument (using ZVL device class)
+        trace_setting     The settings of the trace (using ZVL trace class)
+        frequency         matrix (list) containing the frequency points
+        yval1             matrix (list) containing the measurement values
+        yval2             matrix (list) contining the smallest of the two values
+                          (only if AUTOPEAK is enabled, otherwise emtpy)
+'''
+def mul_measurements_1ch(filename, filepath, autopeak):
+    
+    device_setting = []
+    trace_setting = []
+    frequency = []
+    yval1 = []
+    yval2 = []  
+    
+    for file in filename:
+        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = read_dat_1trace_spec(filepath + file, autopeak)
+        device_setting.append(device_temp)
+        trace_setting.append(trace_temp)
+        frequency.append(frequency_temp)
+        yval1.append(yval1_temp)
+        yval2.append(yval2_temp)
+
+    return [device_setting, trace_setting, frequency, yval1, yval2]
+
+
+
+'''
+    This function plots multiple traces in one plot.
+    
+    Input Parameters:
+        frequency  frequency matrix, consisting of the time data vectors
+        yval       voltage matrix, consisting of the measured voltage vecotrs
+        title      string consisting the title of the plot
+        xlabel     string including the label of the x-axis
+        ylabel     string including the label of the y-axis
+        legend     vector of strings consisting of the legend
+        xfit       optional argument for the left and right xlim
+        
+    Output Parameters:
+        NONE
+'''
+def multiplot(frequency, yval, title, xlabel, ylabel, legend, xfit = None):
+        
+    plt.figure()
+
+    for cnt in range(len(frequency)):
+        plt.semilogx(frequency[cnt], yval[cnt])
+        
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.legend(legend)
+    if xfit != None:
+        plt.xlim(xfit)
+    plt.grid(which='both', axis='both')
+       
+    plt.tight_layout()
+    plt.show
+
+
+
+
+
+
+
