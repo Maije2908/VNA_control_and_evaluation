@@ -13,44 +13,42 @@ import ZVL_scripts as ZVL
 
 if __name__ =='__main__':
         
-    filename = 'Testdata/Spectrum_Analyzer/TESTDATA.dat'
+    filepath = 'Testdata/Spectrum_Analyzer/'
+    filenames = ['TESTDATA.dat'] # could of course be more than one
     autopeak = 1
+    save_flag = 0
     
-    [a,b,c,d,e] = ZVL.read_dat_1trace_spec(filename, autopeak)
-    
-
-
-    # creating plot
-    #     fig = plt.figure()
-
-    #     for cnt in range(len(value_1MHz)):
-    #         #plt.semilogx(value_1MHz[cnt][:,0], value_1MHz[cnt][:,1])
-    #         plt.semilogx(value_1MHz[cnt][:,0], value_1MHz[cnt][:,2])
-            
-    #     plt.title('Disturbances for 9kHz to 1MHz')
-    #     plt.xlabel('Frequency in Hz')
-    #     plt.ylabel('dBm')
-    #     plt.legend(['noise','0mA','15mA','50mA','100mA','200mA'])
-    #     plt.xlim(min(value_1MHz[0][:,0]), max(value_1MHz[0][:,0]))
-    #     plt.grid(which='both', axis='both')
-           
-    #     plt.tight_layout()
-    #     plt.show
+    number_of_files = len(filenames)
+    device_setting = []
+    trace_setting = []
+    frequency = []
+    yval1 = []
+    yval2 = []
         
-    #     # creating plot
-    #     fig = plt.figure()
-
-    #     for cnt in range(len(value_10MHz)):
-    #         #plt.semilogx(value_10MHz[cnt][:,0], value_10MHz[cnt][:,1])
-    #         plt.semilogx(value_10MHz[cnt][:,0], value_10MHz[cnt][:,2])
+    for name in filenames:
+        
+        temp_device_setting, temp_trace_setting, temp_frequency, temp_yval1, temp_yval2 = ZVL.read_dat_1trace_spec(filepath + name, autopeak)
+        device_setting.append(temp_device_setting)
+        trace_setting.append(temp_trace_setting)
+        frequency.append(temp_frequency)
+        yval1.append(temp_yval1)
+        yval2.append(temp_yval2)
+        
+        # create individual plots
+        fig = plt.figure()
+    
+        plt.semilogx(temp_frequency, temp_yval1)
             
-    #     plt.title('Disturbances for 9kHz to 10MHz')
-    #     plt.xlabel('Frequency in Hz')
-    #     plt.legend(['noise','0mA','15mA','50mA','100mA','200mA'])
-    #     plt.xlim(min(value_10MHz[0][:,0]), max(value_10MHz[0][:,0]))
-    #     plt.grid(which='both', axis='both')
+        plt.title(name)
+        plt.xlabel('Frequency in Hz')
+        plt.ylabel('dBuV')
+        plt.xlim(min(temp_frequency), max(temp_frequency))
+        #plt.ylim(-10, 50)
+        plt.grid(which='both', axis='both')
            
-    #     plt.tight_layout()
-    #     plt.show
-    
-    
+        plt.tight_layout()
+        plt.show
+        
+        if save_flag == 1:
+            plt.savefig(name[:-4] + '_log.png')
+        
