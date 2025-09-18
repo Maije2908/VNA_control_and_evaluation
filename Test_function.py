@@ -9,7 +9,7 @@ import skrf as rf
 import numpy as np
 import matplotlib.pyplot as plt
 
-import ZVL_scripts as ZVL
+import VNA_scripts as VNA
 
 if __name__ =='__main__':
         
@@ -27,7 +27,7 @@ if __name__ =='__main__':
         
     for name in filenames:
         
-        temp_device_setting, temp_trace_setting, temp_frequency, temp_yval1, temp_yval2 = ZVL.read_dat_1trace_spec(filepath + name, autopeak)
+        temp_device_setting, temp_trace_setting, temp_frequency, temp_yval1, temp_yval2 = VNA.read_dat_1trace_spec(filepath + name, autopeak)
         device_setting.append(temp_device_setting)
         trace_setting.append(temp_trace_setting)
         frequency.append(temp_frequency)
