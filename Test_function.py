@@ -13,21 +13,21 @@ import VNA_scripts as VNA
 
 if __name__ =='__main__':
         
-    filepath = 'Testdata/Spectrum_Analyzer/'
-    filenames = ['TESTDATA.dat'] # could of course be more than one
+    filepath_ZVL = 'Testdata/ZVL/Spectrum_Analyzer/'
+    filenames_ZVL = ['TESTDATA.dat'] # could of course be more than one
     autopeak = 1
     save_flag = 0
     
-    number_of_files = len(filenames)
+    number_of_files = len(filenames_ZVL)
     device_setting = []
     trace_setting = []
     frequency = []
     yval1 = []
     yval2 = []
         
-    for name in filenames:
+    for name in filenames_ZVL:
         
-        temp_device_setting, temp_trace_setting, temp_frequency, temp_yval1, temp_yval2 = VNA.read_dat_1trace_spec(filepath + name, autopeak)
+        temp_device_setting, temp_trace_setting, temp_frequency, temp_yval1, temp_yval2 = VNA.read_dat_1trace_spec(filepath_ZVL + name, autopeak)
         device_setting.append(temp_device_setting)
         trace_setting.append(temp_trace_setting)
         frequency.append(temp_frequency)

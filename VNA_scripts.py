@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 author: Maier Christoph
-date: 17.06.2025
+date: 18.09.2025
 
-This module is a selection of functions for the control of the ZVL VNA, and the 
-manipulation of the generate measurement data.
+This module is a selection of functions for the control of the different VNAs
+we are using, and also for the manipulation of the generated measurement data.
 """
 
 # import needed packages
