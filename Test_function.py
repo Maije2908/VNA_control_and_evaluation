@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Dec  5 10:56:46 2024
+author: Maier Christoph
+date: 22.09.2025
 
-@author: christoph_m
+This script is a test function to show and test the various functions defined
+in "VNA_scripts".
 """
 
 import skrf as rf
