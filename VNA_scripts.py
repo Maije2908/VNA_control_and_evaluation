@@ -29,10 +29,13 @@ ShowdB = False # Flag if results should be given in dB
 
 
 
+#%%
 """
-    A class to allow easy access to the measurement settings of the ZVL. The
-    description of the attributes is taken from the ZVL manual
-    (ASCII file export format).
+    ZVL spectrum analyzer settings
+    
+    A class to allow easy access to the measurement settings of the ZVL in
+    specttrum analyzer mode. The description of the attributes is taken from
+    the ZVL manual (ASCII file export format).
 
     Attributes:
         dev_type (string): Instrument model
@@ -74,7 +77,7 @@ ShowdB = False # Flag if results should be given in dB
     Methods:
         None
 """
-class ZVL_device_setting:
+class ZVL_spectrum_setting:
     def __init__(self, dev_type, version, date, mode, center_freq, center_unit,
                  offset, offset_unit, span, span_unit, xAx_type, xAx_start,
                  xAx_start_unit, xAx_stop, xAx_stop_unit, reflvl, reflvl_unit,
@@ -117,6 +120,7 @@ class ZVL_device_setting:
         self.trace_mode = trace_mode
         self.detector = detector
         self.sweep_cnt = int(sweep_cnt)
+#%%
         
         
 """
@@ -257,7 +261,7 @@ def read_dat_1trace_spec(filename, autopeak):
     transducer = header[26][1]
     meas_number = header[27][1]
     
-    device_setting = ZVL_device_setting(dev_type, dev_version, dev_date, dev_mode, 
+    device_setting = ZVL_spectrum_setting(dev_type, dev_version, dev_date, dev_mode, 
                             dev_center_freq, dev_center_unit, dev_offset,
                             dev_offset_unit, dev_span, dev_span_unit,
                             dev_xAx_type, dev_xAx_start, dev_xAx_start_unit,
