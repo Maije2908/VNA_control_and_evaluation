@@ -15,11 +15,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+
 ###############################################################################
 ################################## Constants ##################################
 ###############################################################################
 
 eps = np.finfo(np.float64).eps # define epsilon (a very small number)
+
 
 
 ###############################################################################
@@ -28,6 +30,7 @@ eps = np.finfo(np.float64).eps # define epsilon (a very small number)
 
 ShowCMD = False # Flag if output in the command line should be shown
 ShowdB = False # Flag if results should be given in dB
+
 
 
 ###############################################################################
@@ -74,18 +77,19 @@ def reset_showCMD():
 #%%
 
 
+
 ###############################################################################
 ############################ Rohde und Schwarz ZVL ############################
 ###############################################################################
 
 '''
-    ZVL spectrum analyzer settings
+    ZVL spectrum analyzer: device settings
     
     A class to allow easy access to the measurement settings of the ZVL in
     spectrum analyzer mode. The description of the attributes is taken from
     the ZVL-K1 manual (see: ASCII file export format).
 '''
-#%%%
+#%%
 '''
     Attributes:
         dev_type (string): Instrument model
@@ -102,7 +106,7 @@ def reset_showCMD():
         xAx_start (float): Start frequency of the display range (value)
         xAx_start_unit (string): Start frequency of the display range (unit)
         xAx_stop (float): Stop frequency of the display range (value)
-        xAx_stop (string): Stop frequency of the display range (unit)
+        xAx_stop_unit (string): Stop frequency of the display range (unit)
         reflvl (float): Reference level (value)
         reflvl_unit (string): Reference level (unit)
         offsetlvl (float): Level Offset (value)
@@ -127,7 +131,7 @@ def reset_showCMD():
     Methods:
         None
 '''
-class ZVL_spectrum_setting:
+class ZVL_spectrum_setting_device:
     def __init__(self, dev_type, version, date, mode, center_freq, center_unit,
                  offset, offset_unit, span, span_unit, xAx_type, xAx_start,
                  xAx_start_unit, xAx_stop, xAx_stop_unit, reflvl, reflvl_unit,
@@ -174,7 +178,7 @@ class ZVL_spectrum_setting:
 
 
 '''
-    ZVL spectrum analyzer trace settings
+    ZVL spectrum analyzer: trace settings
     
     A class to allow easy access to the trace settings of the Rohde und Schwarz
     ZVL for a one trace measurements.
@@ -191,7 +195,7 @@ class ZVL_spectrum_setting:
     Methods:
         None
 '''        
-class ZVL_spectrum_one_trace:
+class ZVL_spectrum_settings_one_trace:
     def __init__(self, x_unit, y_unit, preamp, transducer, meas_number):
         
         self.x_unit = x_unit
@@ -202,12 +206,148 @@ class ZVL_spectrum_one_trace:
 #%%
 
 
+'''
+    ZVL spectrum analyzer: read a one trace measurement (with/without AUTOPEAK)
+    
+    This function reads a .dat file for a spectrum analyzer measurement with 
+    one trace. It uses the ZVL_spectrum_setting_device and  the
+    ZVL_spectrum_setting_one_trace class to give the settings of the instrument
+    and the settings of the trace.
+'''
+#%%
+'''  
+    Input Parameters:
+        filename (string): Filename (including path) of the .dat file
+        autopeak (int): flag which indicates if the autopeak setting was set.
+                        Autopeak adds another output (yval2), which gives the
+                        smallest of the two measured values (see ZVL manual)
+    
+    Output parameters:
+        device_setting (ZVL_spectrum_setting_device): Settings of the instrument
+        trace_setting  (ZVL_spectrum_settings_one_trace): Settings of the trace
+        frequency (list): Contains the frequency points
+        yval1 (list): Contains the measured values
+        yval2 (list): Contains the smallest of the two measured values
+                      (only if AUTOPEAK is enabled, otherwise emtpy)
+'''
+def ZVL_spectrum_read_1trace(filename, autopeak):
+    
+    file_data = []
+    file_header = []
+    frequency = []
+    yval1 = []
+    yval2 = []
+    
+    # Basic idea is to test if the entry of the line is a ditig (aka a measured
+    # value). If not, it has to be part of the header.
+    with open(filename, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if line and line[0].isdigit():
+                row = [float(x) for x in line.split(';')]
+                file_data.append(row)
+            else:
+                row = [str(x) for x in line.split(';')]
+                file_header.append(row)
+        
+    # Assuming the header is always the same and will stay the same forever!
+    # This should be the case, if the manual is right...
+    # store device settings
+    dev_type = file_header[0][1]
+    dev_version = file_header[1][1]
+    dev_date = file_header[2][1]
+    dev_mode = file_header[3][1]
+    dev_center_freq = file_header[4][1]
+    dev_center_unit= file_header[4][2] 
+    dev_offset = file_header[5][1]
+    dev_offset_unit = file_header[5][2]
+    dev_span = file_header[6][1]
+    dev_span_unit = file_header[6][2]
+    dev_xAx_type = file_header[7][1]
+    dev_xAx_start = file_header[8][1]
+    dev_xAx_start_unit = file_header[8][2]
+    dev_xAx_stop = file_header[9][1]
+    dev_xAx_stop_unit = file_header[9][2]
+    dev_reflvl = file_header[10][1]
+    dev_reflvl_unit = file_header[10][2]
+    dev_offsetlvl = file_header[11][1]
+    dev_offsetlvl_unit = file_header[11][2]
+    dev_refpos = file_header[12][1]
+    dev_refpos_unit = file_header[12][2]
+    dev_yAx_type = file_header[13][1]
+    dev_rangelvl = file_header[14][1]
+    dev_rangelvl_unit = file_header[14][2]
+    dev_rfatt = file_header[15][1]
+    dev_rfatt_unit = file_header[15][2]
+    dev_RBW = file_header[16][1]
+    dev_RBW_unit = file_header[16][2]
+    dev_VBW = file_header[17][1]
+    dev_VBW_unit = file_header[17][2]
+    dev_SWT = file_header[18][1]
+    dev_SWT_unit = file_header[18][2]
+    dev_trace_mode = file_header[19][1]
+    dev_detector = file_header[20][1]
+    dev_sweep_cnt = file_header[21][1]
+    
+    # store trace settings
+    x_unit = file_header[23][1]
+    y_unit = file_header[24][1]
+    preamp = file_header[25][1]
+    transducer = file_header[26][1]
+    meas_number = file_header[27][1]
+    
+    # There is a class for every device (and for all kinds of measurements).
+    # Here, the assignment of the variables is done (Varies for every device).
+    # To be honest, there are two classes: device settings and trace settings.
+    device_setting = ZVL_spectrum_setting_device(
+        dev_type, dev_version, dev_date, dev_mode, dev_center_freq,
+        dev_center_unit, dev_offset, dev_offset_unit, dev_span, dev_span_unit,
+        dev_xAx_type, dev_xAx_start, dev_xAx_start_unit, dev_xAx_stop,
+        dev_xAx_stop_unit, dev_reflvl, dev_reflvl_unit, dev_offsetlvl,
+        dev_offsetlvl_unit, dev_refpos, dev_refpos_unit, dev_yAx_type,
+        dev_rangelvl, dev_rangelvl_unit, dev_rfatt, dev_rfatt_unit, dev_RBW,
+        dev_RBW_unit, dev_VBW, dev_VBW_unit, dev_SWT, dev_SWT_unit,
+        dev_trace_mode, dev_detector, dev_sweep_cnt)
+
+    trace_setting = ZVL_spectrum_settings_one_trace(
+        x_unit, y_unit, preamp, transducer, meas_number)
+    
+    # Measured data is stored here in two (three if AUTOPEAK is set) separate lists.
+    for cnt in range(len(file_data)):
+        frequency.append(file_data[cnt][0])
+        yval1.append(file_data[cnt][1])
+        
+        if autopeak == 1:
+            yval2.append(file_data[cnt][2])
+                         
+    return [device_setting, trace_setting, frequency, yval1, yval2]
+#%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###############################################################################
 ############################ Rohde und Schwarz ZNL ############################
 ###############################################################################
 
 '''
-    ZNL spectrum analyzer settings
+    ZNL spectrum analyzer: device settings
     
     A class to allow easy access to the measurement settings of the ZNL in
     spectrum analyzer mode. The description of the attributes is taken from
@@ -230,7 +370,7 @@ class ZVL_spectrum_one_trace:
         xAx_start (float): Start frequency of the display range (value)
         xAx_start_unit (string): Start frequency of the display range (unit)
         xAx_stop (float): Stop frequency of the display range (value)
-        xAx_stop (string): Stop frequency of the display range (unit)
+        xAx_stop_unit (string): Stop frequency of the display range (unit)
         span (float): Frequency range (value)
         span_unit (string): Frequency range (unit)
         reflvl (float): Reference level (value)
@@ -260,7 +400,7 @@ class ZVL_spectrum_one_trace:
     Methods:
         None
 '''
-class ZNL_spectrum_setting:
+class ZNL_spectrum_setting_device:
     def __init__(self, dev_type, version, date, mode, preamp, transducer,
                  center_freq, center_unit, offset, offset_unit,  xAx_start, 
                  xAx_start_unit, xAx_stop, xAx_stop_unit, span, span_unit,
@@ -312,7 +452,7 @@ class ZNL_spectrum_setting:
 
 
 '''
-    ZNL spectrum analyzer trace settings
+    ZNL spectrum analyzer: trace settings
     
     A class to allow easy access to the trace settings of the Rohe und Schwarz
     ZNL for a one trace measurements.
@@ -328,13 +468,146 @@ class ZNL_spectrum_setting:
     Methods:
         None
 '''        
-class ZNL_spectrum_one_trace:
+class ZNL_spectrum_setting_one_trace:
     def __init__(self, trace, trace_mode, detector, meas_number):
         
         self.trace = trace
         self.trace_mode = trace_mode
         self.detector = detector
         self.meas_number = int(meas_number)       
+#%%
+
+
+'''
+    ZNL spectrum analyzer: read a one trace measurement (with/without AUTOPEAK)
+    
+    This function reads a .dat file for a spectrum analyzer measurement with 
+    one trace. It uses the ZNL_spectrum_setting_device and  the
+    ZNL_spectrum_setting_one_trace class to give the settings of the instrument
+    and the settings of the trace.
+'''
+#%%
+'''  
+    Input Parameters:
+        filename (string): Filename (including path) of the .dat file
+        autopeak (int): flag which indicates if the autopeak setting was set.
+                        Autopeak adds another output (yval2), which gives the
+                        smallest of the two measured values (see ZVL manual)
+    
+    Output parameters:
+        device_setting (ZVL_spectrum_setting_device): Settings of the instrument
+        trace_setting  (ZVL_spectrum_settings_one_trace): Settings of the trace
+        frequency (list): Contains the frequency points
+        yval1 (list): Contains the measured values
+        yval2 (list): Contains the smallest of the two measured values
+                      (only if AUTOPEAK is enabled, otherwise emtpy)
+'''
+def ZNL_spectrum_read_1trace(filename, autopeak):
+    
+    file_data = []
+    file_header = []
+    frequency = []
+    yval1 = []
+    yval2 = []
+    
+    # Basic idea is to test if the entry of the line is a ditig (aka a measured
+    # value). If not, it has to be part of the header.
+    with open(filename, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if line and line[0].isdigit():
+                row = [float(x) for x in line.split(';')]
+                file_data.append(row)
+            else:
+                row = [str(x) for x in line.split(';')]
+                file_header.append(row)
+        
+    # Assuming the header is always the same and will stay the same forever!
+    # This should be the case, if the manual is right...
+    # store device settings
+    dev_type = file_header[0][1]
+    dev_version = file_header[1][1]
+    dev_date = file_header[2][1]
+    dev_mode = file_header[3][1]
+    dev_preamp = file_header[4][1]
+    dev_transducer = file_header[5][1]
+    dev_center_freq = file_header[6][1]
+    dev_center_unit= file_header[6][2] 
+    dev_offset = file_header[7][1]
+    dev_offset_unit = file_header[7][2]
+    dev_xAx_start = file_header[8][1]
+    dev_xAx_start_unit = file_header[8][2]
+    dev_xAx_stop = file_header[9][1]
+    dev_xAx_stop_unit = file_header[9][2]
+    dev_span = file_header[10][1]
+    dev_span_unit = file_header[10][2]
+    dev_reflvl = file_header[11][1]
+    dev_reflvl_unit = file_header[11][2]
+    dev_offsetlvl = file_header[12][1]
+    dev_offsetlvl_unit = file_header[12][2]
+    dev_rfatt = file_header[13][1]
+    dev_rfatt_unit = file_header[13][2]
+    dev_elatt = file_header[14][1]
+    dev_elatt_unit = file_header[14][2]
+    dev_RBW = file_header[15][1]
+    dev_RBW_unit = file_header[15][2]
+    dev_VBW = file_header[16][1]
+    dev_VBW_unit = file_header[16][2]
+    dev_SWT = file_header[17][1]
+    dev_SWT_unit = file_header[17][2]
+    dev_sweep_cnt = file_header[18][1]
+    dev_refpos = file_header[19][1]
+    dev_refpos_unit = file_header[19][2]
+    dev_rangelvl = file_header[20][1]
+    dev_rangelvl_unit = file_header[20][2]
+    dev_xAx_type = file_header[21][1]
+    dev_yAx_type = file_header[22][1]
+    dev_xAx_unit = file_header[23][1]
+    dev_yAx_unit = file_header[24][1]
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    # store trace settings
+    x_unit = file_header[23][1]
+    y_unit = file_header[24][1]
+    preamp = file_header[25][1]
+    transducer = file_header[26][1]
+    meas_number = file_header[27][1]
+    
+    # There is a class for every device (and for all kinds of measurements).
+    # Here, the assignment of the variables is done (Varies for every device).
+    # To be honest, there are two classes: device settings and trace settings.
+    device_setting = ZVL_spectrum_setting_device(
+        dev_type, dev_version, dev_date, dev_mode, dev_center_freq,
+        dev_center_unit, dev_offset, dev_offset_unit, dev_span, dev_span_unit,
+        dev_xAx_type, dev_xAx_start, dev_xAx_start_unit, dev_xAx_stop,
+        dev_xAx_stop_unit, dev_reflvl, dev_reflvl_unit, dev_offsetlvl,
+        dev_offsetlvl_unit, dev_refpos, dev_refpos_unit, dev_yAx_type,
+        dev_rangelvl, dev_rangelvl_unit, dev_rfatt, dev_rfatt_unit, dev_RBW,
+        dev_RBW_unit, dev_VBW, dev_VBW_unit, dev_SWT, dev_SWT_unit,
+        dev_trace_mode, dev_detector, dev_sweep_cnt)
+
+    trace_setting = ZVL_spectrum_settings_one_trace(
+        x_unit, y_unit, preamp, transducer, meas_number)
+    
+    # Measured data is stored here in two (three if AUTOPEAK is set) separate lists.
+    for cnt in range(len(file_data)):
+        frequency.append(file_data[cnt][0])
+        yval1.append(file_data[cnt][1])
+        
+        if autopeak == 1:
+            yval2.append(file_data[cnt][2])
+                         
+    return [device_setting, trace_setting, frequency, yval1, yval2]
 #%%
 
 
@@ -353,16 +626,6 @@ class ZNL_spectrum_one_trace:
 
 
 
-
-
-
-
-
-
-
-
-    
-
        
  
 
@@ -370,112 +633,10 @@ class ZNL_spectrum_one_trace:
 
 
 
-'''
-    This function reads a .dat file for a spectrum analyzer measurement with 
-    one trace. It uses the ZVL device and ZVL trace class to give the 
-    settings of the instrument and the trace. 
-    
-    Input Parameters:
-        filename    string which stores the filename (including path) of the
-                    .dat file
-        autopeak    flag which indicates if the autopeak setting was set.
-                    Autopeak adds another output (yval2), which gives the
-                    smallest of the two measured values (see ZVL manual)
-    
-    Output parameters:
-        device_setting    The settings of the instrument (using ZVL device class)
-        trace_setting     The settings of the trace (using ZVL trace class)
-        frequency         vector (list) containing the frequency points
-        yval1             vector (list) containing the measurement values
-        yval2             vector (list) contining the smallest of the two values
-                          (only if AUTOPEAK is enabled, otherwise emtpy)
-'''
-def read_dat_1trace_spec(filename, autopeak):
-    
-    data = []
-    header = []
-    frequency = []
-    yval1 = []
-    yval2 = []
-    
-    with open(filename, 'r') as file:
-        for line in file:
-            line = line.strip()
-            if line and line[0].isdigit():
-                row = [float(x) for x in line.split(';')]
-                data.append(row)
-            else:
-                row = [str(x) for x in line.split(';')]
-                header.append(row)
-        
-    # Assuming the header is always the same and will stay the same forever
-    # Device settings
-    dev_type = header[0][1]
-    dev_version = header[1][1]
-    dev_date = header[2][1]
-    dev_mode = header[3][1]
-    dev_center_freq = header[4][1]
-    dev_center_unit= header[4][2] 
-    dev_offset = header[5][1]
-    dev_offset_unit = header[5][2]
-    dev_span = header[6][1]
-    dev_span_unit = header[6][2]
-    dev_xAx_type = header[7][1]
-    dev_xAx_start = header[8][1]
-    dev_xAx_start_unit = header[8][2]
-    dev_xAx_stop = header[9][1]
-    dev_xAx_stop_unit = header[9][2]
-    dev_reflvl = header[10][1]
-    dev_reflvl_unit = header[10][2]
-    dev_offsetlvl = header[11][1]
-    dev_offsetlvl_unit = header[11][2]
-    dev_refpos = header[12][1]
-    dev_refpos_unit = header[12][2]
-    dev_yAx_type = header[13][1]
-    dev_rangelvl = header[14][1]
-    dev_rangelvl_unit = header[14][2]
-    dev_rfatt = header[15][1]
-    dev_rfatt_unit = header[15][2]
-    dev_RBW = header[16][1]
-    dev_RBW_unit = header[16][2]
-    dev_VBW = header[17][1]
-    dev_VBW_unit = header[17][2]
-    dev_SWT = header[18][1]
-    dev_SWT_unit = header[18][2]
-    dev_trace_mode = header[19][1]
-    dev_detector = header[20][1]
-    dev_sweep_cnt = header[21][1]
-    
-    # Settings of the trace
-    x_unit = header[23][1]
-    y_unit = header[24][1]
-    preamp = header[25][1]
-    transducer = header[26][1]
-    meas_number = header[27][1]
-    
-    device_setting = ZVL_spectrum_setting(dev_type, dev_version, dev_date, dev_mode, 
-                            dev_center_freq, dev_center_unit, dev_offset,
-                            dev_offset_unit, dev_span, dev_span_unit,
-                            dev_xAx_type, dev_xAx_start, dev_xAx_start_unit,
-                            dev_xAx_stop, dev_xAx_stop_unit, dev_reflvl,
-                            dev_reflvl_unit, dev_offsetlvl, dev_offsetlvl_unit,
-                            dev_refpos, dev_refpos_unit, dev_yAx_type,
-                            dev_rangelvl, dev_rangelvl_unit, dev_rfatt,
-                            dev_rfatt_unit, dev_RBW, dev_RBW_unit,
-                            dev_VBW, dev_VBW_unit, dev_SWT, dev_SWT_unit,
-                            dev_trace_mode, dev_detector, dev_sweep_cnt)
 
-    trace_setting = ZVL_spectrum_one_trace(x_unit, y_unit, preamp,
-                                      transducer, meas_number)
-    
-    for cnt in range(len(data)):
-        frequency.append(data[cnt][0])
-        yval1.append(data[cnt][1])
-        
-        if autopeak == 1:
-            yval2.append(data[cnt][2])
-                            
-    return [device_setting, trace_setting, frequency, yval1, yval2]
+
+
+
 
 
 
@@ -507,7 +668,7 @@ def mul_measurements_1ch(filename, filepath, autopeak):
     yval2 = []  
     
     for file in filename:
-        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = read_dat_1trace_spec(filepath + file, autopeak)
+        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = ZVL_spectrum_read_1trace(filepath + file, autopeak)
         device_setting.append(device_temp)
         trace_setting.append(trace_temp)
         frequency.append(frequency_temp)
