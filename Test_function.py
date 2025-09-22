@@ -84,7 +84,7 @@ if __name__ =='__main__':
         ### ZNL test ###
         for name in filenames_ZNL:
             
-            temp_device_setting, temp_trace_setting, temp_frequency, temp_yval1, temp_yval2 = VNA.read_dat_1trace_spec(filepath_ZVL + name, autopeak)
+            temp_device_setting, temp_trace_setting, temp_frequency, temp_yval1, temp_yval2 = VNA.read_dat_1trace_spec(filepath_ZNL + name, autopeak)
             device_setting_ZVL.append(temp_device_setting)
             trace_setting_ZVL.append(temp_trace_setting)
             frequency_ZVL.append(temp_frequency)

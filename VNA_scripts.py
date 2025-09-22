@@ -14,11 +14,13 @@ we are using, and also for the manipulation of the generated measurement data.
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 ###############################################################################
 ################################## Constants ##################################
 ###############################################################################
 
 eps = np.finfo(np.float64).eps # define epsilon (a very small number)
+
 
 ###############################################################################
 ################################## Defaults ###################################
@@ -28,13 +30,60 @@ ShowCMD = False # Flag if output in the command line should be shown
 ShowdB = False # Flag if results should be given in dB
 
 
+###############################################################################
+############################### Global functions ##############################
+###############################################################################
+
+'''
+    show command line output
+    
+    This function sets the global ShowCMD flag. The flag controls, if results
+    will be shown in the command line. 
+'''
+#%%
+'''
+    Input Parameters:
+        None
+    
+    Output parameters:
+        None
+'''
+def set_showCMD():
+    global ShowCMD
+    ShowCMD = True
+#%%
+
+
+'''
+    do not show command line output
+    
+    This function resets sets the global ShowCMD flag. The flag controls, if
+    results will be shown in the command line. 
+'''
+#%%
+'''
+    Input Parameters:
+        None
+    
+    Output parameters:
+        None
+'''
+def reset_showCMD():
+    global ShowCMD
+    ShowCMD = False
+#%%
+
+
+###############################################################################
+############################ Rohde und Schwarz ZVL ############################
+###############################################################################
 
 '''
     ZVL spectrum analyzer settings
     
     A class to allow easy access to the measurement settings of the ZVL in
-    specttrum analyzer mode. The description of the attributes is taken from
-    the ZVL manual (see: ASCII file export format).
+    spectrum analyzer mode. The description of the attributes is taken from
+    the ZVL-K1 manual (see: ASCII file export format).
 '''
 #%%%
 '''
@@ -122,13 +171,16 @@ class ZVL_spectrum_setting:
         self.detector = detector
         self.sweep_cnt = int(sweep_cnt)
 #%%
+
+
+'''
+    ZVL spectrum analyzer trace settings
     
-
-       
-"""
-    A class to allow easy access to the trace settings of the ZVL for a one
-    trace measurements.
-
+    A class to allow easy access to the trace settings of the Rohde und Schwarz
+    ZVL for a one trace measurements.
+'''
+#%%
+'''
     Attributes:
         x_unit (string): Unit of the x values
         y_unit (string): Unit of the y values
@@ -138,46 +190,184 @@ class ZVL_spectrum_setting:
 
     Methods:
         None
-"""        
-class ZVL_trace:
+'''        
+class ZVL_spectrum_one_trace:
     def __init__(self, x_unit, y_unit, preamp, transducer, meas_number):
         
         self.x_unit = x_unit
         self.y_unit = y_unit
         self.preamp = preamp
         self.transducer = transducer
-        self.meas_number = int(meas_number)        
+        self.meas_number = int(meas_number)       
+#%%
+
+
+###############################################################################
+############################ Rohde und Schwarz ZNL ############################
+###############################################################################
+
+'''
+    ZNL spectrum analyzer settings
+    
+    A class to allow easy access to the measurement settings of the ZNL in
+    spectrum analyzer mode. The description of the attributes is taken from
+    the ZNL analog demodulation mode manual (see: 11.7.5 Reference: ASCII file
+    export format).
+'''
+#%%%
+'''
+    Attributes:
+        dev_type (string): Instrument model
+        version (string): Firmware version
+        date (string): Date of data set storage
+        mode (string): Instrument mode
+        preamp (string): Preamplifier status
+        transducer (string): Transducer status
+        center_freq (float): Center frequency (value)
+        center_unit (string): Center frequency (unit)
+        offset (float): Frequency offset (value)
+        offset_unit (string): Frequency offset (unit)
+        xAx_start (float): Start frequency of the display range (value)
+        xAx_start_unit (string): Start frequency of the display range (unit)
+        xAx_stop (float): Stop frequency of the display range (value)
+        xAx_stop (string): Stop frequency of the display range (unit)
+        span (float): Frequency range (value)
+        span_unit (string): Frequency range (unit)
+        reflvl (float): Reference level (value)
+        reflvl_unit (string): Reference level (unit)
+        offsetlvl (float): Level Offset (value)
+        offsetlvl_unit (string): Level Offset (unit)
+        rfatt (float): Input attenuation (value)
+        rfatt_unit (string): Input attenuation (unit)
+        elatt (float): Electrical attenuation (value)
+        elatt_unit (string): Electrical attenuation (unit)
+        RBW (float): Resolution bandwidth (value)
+        RBW_unit (string): Resolution bandwidth (unit)
+        VBW (float): Video bandwidth (value)
+        VBW_unit (string): Video bandwidth (unit)
+        SWT (float): Sweep time (value)
+        SWT_unit (string): Sweep time (unit)
+        sweep_cnt (int): Number of sweeps set
+        refpos (float): Position of reference level reffered to diagram limits (value)
+        refpos_unit (string): Position of reference level reffered to diagram limits (unit)
+        rangelvl (float): Display range in y direction (value)
+        rangelvl_unit (string): Display range in y direction (unit)   
+        xAx_type (string): Scaling of x-axis (linear (LIN) or logarithmic (LOG))
+        yAx_type (string): Scaling of y-axis (linear (LIN) or logarithmic (LOG))  
+        xAx_unit (string): Unit of x values
+        yAx_unit (string): Unit of y values
+
+    Methods:
+        None
+'''
+class ZNL_spectrum_setting:
+    def __init__(self, dev_type, version, date, mode, preamp, transducer,
+                 center_freq, center_unit, offset, offset_unit,  xAx_start, 
+                 xAx_start_unit, xAx_stop, xAx_stop_unit, span, span_unit,
+                 reflvl, reflvl_unit, offsetlvl, offsetlvl_unit, rfatt,
+                 rfatt_unit, elatt, elatt_unit, RBW, RBW_unit, VBW, VBW_unit,
+                 SWT, SWT_unit, sweep_cnt, refpos, refpos_unit, rangelvl,
+                 rangelvl_unit, xAx_type, yAx_type, xAx_unit, yAx_unit):
+        
+        self.dev_type = dev_type
+        self.version = version
+        self.date = date
+        self.mode = mode
+        self.preamp = preamp
+        self.transducer = transducer
+        self.center_freq = float(center_freq)
+        self.center_unit = center_unit
+        self.offset = float(offset)
+        self.offset_unit = offset_unit
+        self.xAx_start = float(xAx_start)
+        self.xAx_start_unit = xAx_start_unit
+        self.xAx_stop = float(xAx_stop)
+        self.xAx_stop_unit = xAx_stop_unit
+        self.span = float(span)
+        self.span_unit = span_unit
+        self.reflvl = float(reflvl)
+        self.reflvl_unit = reflvl_unit
+        self.offsetlvl = float(offsetlvl)
+        self.offsetlvl_unit = offsetlvl_unit
+        self.rfatt = float(rfatt)
+        self.rfatt_unit = rfatt_unit
+        self.elatt = elatt
+        self.elatt_unit = elatt_unit
+        self.RBW = float(RBW)
+        self.RBW_unit = RBW_unit
+        self.VBW = float(VBW)
+        self.VBW_unit = VBW_unit
+        self.SWT = float(SWT)
+        self.SWT_unit = SWT_unit
+        self.sweep_cnt = int(sweep_cnt)
+        self.refpos = float(refpos)
+        self.refpos_unit = refpos_unit
+        self.rangelvl = float(rangelvl)
+        self.rangelvl_unit = rangelvl_unit
+        self.xAx_type = xAx_type
+        self.yAx_type = yAx_type
+        self.xAx_unit = xAx_unit
+        self.yax_unit = yAx_unit
+#%%
 
 
 '''
-    This function sets the global ShowCMD flag. The flag controls, if results
-    will be shown in the command line. 
+    ZNL spectrum analyzer trace settings
     
-    Input Parameters:
-        None
-    
-    Output parameters:
-        None
+    A class to allow easy access to the trace settings of the Rohe und Schwarz
+    ZNL for a one trace measurements.
 '''
-def set_showCMD():
-    global ShowCMD
-    ShowCMD = True
+#%%
+'''
+    Attributes:
+        trace (string): Selected trace
+        trace_mode (string): Display mode of trace
+        detector (string): selected detector
+        meas_number (int): Number of measurement points
+
+    Methods:
+        None
+'''        
+class ZNL_spectrum_one_trace:
+    def __init__(self, trace, trace_mode, detector, meas_number):
+        
+        self.trace = trace
+        self.trace_mode = trace_mode
+        self.detector = detector
+        self.meas_number = int(meas_number)       
+#%%
 
 
 
-'''
-    This function resets sets the global ShowCMD flag. The flag controls, if
-    results will be shown in the command line. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
-    Input Parameters:
-        None
-    
-    Output parameters:
-        None
-'''
-def reset_showCMD():
-    global ShowCMD
-    ShowCMD = False
+
+       
+ 
+
+
+
 
 
 '''
@@ -275,7 +465,7 @@ def read_dat_1trace_spec(filename, autopeak):
                             dev_VBW, dev_VBW_unit, dev_SWT, dev_SWT_unit,
                             dev_trace_mode, dev_detector, dev_sweep_cnt)
 
-    trace_setting = ZVL_trace(x_unit, y_unit, preamp,
+    trace_setting = ZVL_spectrum_one_trace(x_unit, y_unit, preamp,
                                       transducer, meas_number)
     
     for cnt in range(len(data)):
