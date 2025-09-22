@@ -1,22 +1,32 @@
 # -*- coding: utf-8 -*-
 """
 author: Maier Christoph
-date: 18.09.2025
+date: 22.09.2025
 
 This module is a selection of functions for the control of the different VNAs
 we are using, and also for the manipulation of the generated measurement data.
 """
 
-# import needed packages
+###############################################################################
+################################### Imports ###################################
+###############################################################################
+
 import numpy as np
 import matplotlib.pyplot as plt
 
-# definition of constants
+###############################################################################
+################################## Constants ##################################
+###############################################################################
+
 eps = np.finfo(np.float64).eps # define epsilon (a very small number)
 
-# set default values of the variables
+###############################################################################
+################################## Defaults ###################################
+###############################################################################
+
 ShowCMD = False # Flag if output in the command line should be shown
 ShowdB = False # Flag if results should be given in dB
+
 
 
 """
