@@ -29,14 +29,15 @@ ShowdB = False # Flag if results should be given in dB
 
 
 
-#%%
-"""
+'''
     ZVL spectrum analyzer settings
     
     A class to allow easy access to the measurement settings of the ZVL in
     specttrum analyzer mode. The description of the attributes is taken from
-    the ZVL manual (ASCII file export format).
-
+    the ZVL manual (see: ASCII file export format).
+'''
+#%%%
+'''
     Attributes:
         dev_type (string): Instrument model
         version (string): Firmware version
@@ -76,7 +77,7 @@ ShowdB = False # Flag if results should be given in dB
 
     Methods:
         None
-"""
+'''
 class ZVL_spectrum_setting:
     def __init__(self, dev_type, version, date, mode, center_freq, center_unit,
                  offset, offset_unit, span, span_unit, xAx_type, xAx_start,
@@ -121,8 +122,9 @@ class ZVL_spectrum_setting:
         self.detector = detector
         self.sweep_cnt = int(sweep_cnt)
 #%%
-        
-        
+    
+
+       
 """
     A class to allow easy access to the trace settings of the ZVL for a one
     trace measurements.
