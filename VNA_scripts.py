@@ -290,11 +290,11 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
     dev_sweep_cnt = file_header[21][1]
     
     # store trace settings
-    x_unit = file_header[23][1]
-    y_unit = file_header[24][1]
-    preamp = file_header[25][1]
-    transducer = file_header[26][1]
-    meas_number = file_header[27][1]
+    tr_x_unit = file_header[23][1]
+    tr_y_unit = file_header[24][1]
+    tr_preamp = file_header[25][1]
+    tr_transducer = file_header[26][1]
+    tr_meas_number = file_header[27][1]
     
     # There is a class for every device (and for all kinds of measurements).
     # Here, the assignment of the variables is done (Varies for every device).
@@ -310,7 +310,7 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
         dev_trace_mode, dev_detector, dev_sweep_cnt)
 
     trace_setting = ZVL_spectrum_settings_one_trace(
-        x_unit, y_unit, preamp, transducer, meas_number)
+        tr_x_unit, tr_y_unit, tr_preamp, tr_transducer, tr_meas_number)
     
     # Measured data is stored here in two (three if AUTOPEAK is set) separate lists.
     for cnt in range(len(file_data)):
@@ -322,23 +322,6 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
                          
     return [device_setting, trace_setting, frequency, yval1, yval2]
 #%%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -468,7 +451,7 @@ class ZNL_spectrum_setting_device:
     Methods:
         None
 '''        
-class ZNL_spectrum_setting_one_trace:
+class ZNL_spectrum_settings_one_trace:
     def __init__(self, trace, trace_mode, detector, meas_number):
         
         self.trace = trace
@@ -565,39 +548,28 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
     dev_xAx_unit = file_header[23][1]
     dev_yAx_unit = file_header[24][1]
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     # store trace settings
-    x_unit = file_header[23][1]
-    y_unit = file_header[24][1]
-    preamp = file_header[25][1]
-    transducer = file_header[26][1]
-    meas_number = file_header[27][1]
+    tr_trace = file_header[25][1]
+    tr_trace_mode = file_header[26][1]
+    tr_detector = file_header[27][1]
+    tr_meas_number = file_header[28][1]
     
     # There is a class for every device (and for all kinds of measurements).
     # Here, the assignment of the variables is done (Varies for every device).
     # To be honest, there are two classes: device settings and trace settings.
-    device_setting = ZVL_spectrum_setting_device(
-        dev_type, dev_version, dev_date, dev_mode, dev_center_freq,
-        dev_center_unit, dev_offset, dev_offset_unit, dev_span, dev_span_unit,
-        dev_xAx_type, dev_xAx_start, dev_xAx_start_unit, dev_xAx_stop,
-        dev_xAx_stop_unit, dev_reflvl, dev_reflvl_unit, dev_offsetlvl,
-        dev_offsetlvl_unit, dev_refpos, dev_refpos_unit, dev_yAx_type,
-        dev_rangelvl, dev_rangelvl_unit, dev_rfatt, dev_rfatt_unit, dev_RBW,
-        dev_RBW_unit, dev_VBW, dev_VBW_unit, dev_SWT, dev_SWT_unit,
-        dev_trace_mode, dev_detector, dev_sweep_cnt)
+    device_setting = ZNL_spectrum_setting_device(
+        dev_type, dev_version, dev_date, dev_mode, dev_preamp, dev_transducer,
+        dev_center_freq, dev_center_unit, dev_offset, dev_offset_unit,
+        dev_xAx_start, dev_xAx_start_unit, dev_xAx_stop, dev_xAx_stop_unit, 
+        dev_span, dev_span_unit, dev_reflvl, dev_reflvl_unit, dev_offsetlvl,
+        dev_offsetlvl_unit, dev_rfatt, dev_rfatt_unit, dev_elatt,
+        dev_elatt_unit, dev_RBW, dev_RBW_unit, dev_VBW, dev_VBW_unit, dev_SWT,
+        dev_SWT_unit, dev_sweep_cnt, dev_refpos, dev_refpos_unit, dev_rangelvl,
+        dev_rangelvl_unit, dev_xAx_type, dev_yAx_type, dev_xAx_unit,
+        dev_yAx_unit)
 
-    trace_setting = ZVL_spectrum_settings_one_trace(
-        x_unit, y_unit, preamp, transducer, meas_number)
+    trace_setting = ZNL_spectrum_settings_one_trace(
+        tr_trace, tr_trace_mode, tr_detector, tr_meas_number)
     
     # Measured data is stored here in two (three if AUTOPEAK is set) separate lists.
     for cnt in range(len(file_data)):
@@ -609,6 +581,8 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
                          
     return [device_setting, trace_setting, frequency, yval1, yval2]
 #%%
+
+
 
 
 
