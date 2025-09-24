@@ -570,30 +570,7 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
 
 
 
-
-
-
-
-
-
-
-
-
-
-       
- 
-
-
-
-
-
-
-
-
-
-
-
-
+# Everything down there has to be reviewed and changed!
 '''
     This function takes the filename of multiple .dat file from a 1 trace
     spectrum analyzer measurement, extracts the data and stores them in a
