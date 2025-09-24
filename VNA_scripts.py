@@ -355,14 +355,6 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
         SWT (float): Sweep time (value)
         SWT_unit (string): Sweep time (unit)
         sweep_cnt (int): Number of sweeps set
-        refpos (float): Position of reference level reffered to diagram limits (value)
-        refpos_unit (string): Position of reference level reffered to diagram limits (unit)
-        rangelvl (float): Display range in y direction (value)
-        rangelvl_unit (string): Display range in y direction (unit)   
-        xAx_type (string): Scaling of x-axis (linear (LIN) or logarithmic (LOG))
-        yAx_type (string): Scaling of y-axis (linear (LIN) or logarithmic (LOG))  
-        xAx_unit (string): Unit of x values
-        yAx_unit (string): Unit of y values
 
     Methods:
         None
@@ -415,6 +407,15 @@ class ZNL_spectrum_setting_device:
     ZNL for a one trace measurements.
 
     Attributes:
+        window (string): selected window
+        refpos (float): Position of reference level reffered to diagram limits (value)
+        refpos_unit (string): Position of reference level reffered to diagram limits (unit)
+        rangelvl (float): Display range in y direction (value)
+        rangelvl_unit (string): Display range in y direction (unit)   
+        xAx_type (string): Scaling of x-axis (linear (LIN) or logarithmic (LOG))
+        yAx_type (string): Scaling of y-axis (linear (LIN) or logarithmic (LOG))  
+        xAx_unit (string): Unit of x values
+        yAx_unit (string): Unit of y values
         trace (string): Selected trace
         trace_mode (string): Display mode of trace
         detector (string): selected detector
@@ -436,7 +437,7 @@ class ZNL_spectrum_settings_one_trace:
         self.xAx_type = xAx_type
         self.yAx_type = yAx_type
         self.xAx_unit = xAx_unit
-        self.yax_unit = yAx_unit
+        self.yAx_unit = yAx_unit
         self.trace = trace
         self.trace_mode = trace_mode
         self.detector = detector
