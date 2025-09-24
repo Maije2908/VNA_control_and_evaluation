@@ -217,7 +217,7 @@ class ZVL_spectrum_settings_one_trace:
         yval2 (list): Contains the smallest of the two measured values
                       (only if AUTOPEAK is enabled, otherwise emtpy)
 '''
-def ZVL_spectrum_read_1trace(filename, autopeak):
+def ZVL_spectrum_read_1trace(filepath, filename, autopeak):
     
     file_data = []
     file_header = []
@@ -227,7 +227,7 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
     
     # Basic idea is to test if the entry of the line is a ditig (aka a measured
     # value). If not, it has to be part of the header.
-    with open(filename, 'r') as file:
+    with open(filepath + filename, 'r') as file:
         for line in file:
             line = line.strip()
             if line and line[0].isdigit():
@@ -307,6 +307,44 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
         if autopeak == 1:
             yval2.append(file_data[cnt][2])
                          
+    return [device_setting, trace_setting, frequency, yval1, yval2]
+
+
+'''
+    This function takes the filename of multiple .dat file from a 1 trace
+    spectrum analyzer measurement, extracts the data and stores them in a
+    matrix. It uses the function 'ZVL_spectrum_read_1trace' for the extraction
+    of the data.
+    
+    Input Parameters:
+        filepath (string): filepath for the stored data
+        filenames (list, string): list of strings which containsthe filenames
+        autopeak (int): flag which indicates if the AUTOPEAK option was used. 
+                        
+    Output parameters:
+        device_setting (list, ZVL_spectrum_setting_device): Settings of the instrument
+        trace_setting  (list, ZVL_spectrum_settings_one_trace): Settings of the trace
+        frequency (list): Contains the frequency points
+        yval1 (list): Contains the measured values
+        yval2 (list): Contains the smallest of the two measured values
+                      (only if AUTOPEAK is enabled, otherwise emtpy)
+'''
+def ZVL_spectrum_read_multrace(filepath, filenames, autopeak):
+    
+    device_setting = []
+    trace_setting = []
+    frequency = []
+    yval1 = []
+    yval2 = []  
+    
+    for file in filenames:
+        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = ZVL_spectrum_read_1trace(filepath, file, autopeak)
+        device_setting.append(device_temp)
+        trace_setting.append(trace_temp)
+        frequency.append(frequency_temp)
+        yval1.append(yval1_temp)
+        yval2.append(yval2_temp)
+
     return [device_setting, trace_setting, frequency, yval1, yval2]
 
 
@@ -466,7 +504,7 @@ class ZNL_spectrum_settings_one_trace:
         yval2 (list): Contains the smallest of the two measured values
                       (only if AUTOPEAK is enabled, otherwise emtpy)
 '''
-def ZNL_spectrum_read_1trace(filename, autopeak):
+def ZNL_spectrum_read_1trace(filepath, filename, autopeak):
     
     file_data = []
     file_header = []
@@ -476,7 +514,7 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
     
     # Basic idea is to test if the entry of the line is a ditig (aka a measured
     # value). If not, it has to be part of the header.
-    with open(filename, 'r') as file:
+    with open(filepath + filename, 'r') as file:
         for line in file:
             line = line.strip()
             if line and line[0].isdigit():
@@ -567,23 +605,23 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
 '''
     This function takes the filename of multiple .dat file from a 1 trace
     spectrum analyzer measurement, extracts the data and stores them in a
-    matrix. It uses the function 'read_dat_1trace_spec' for the extraction of
-    the data.
+    matrix. It uses the function 'ZNL_spectrum_read_1trace' for the extraction
+    of the data.
     
     Input Parameters:
-        filename        string which stores the filename of the .csv file
-        filepath        filepath for the stored data
-        autopek         flag which indicates if the AUTOPEAK option was used. 
+        filepath (string): filepath for the stored data
+        filenames (list, string): list of strings which containsthe filenames
+        autopeak (int): flag which indicates if the AUTOPEAK option was used. 
                         
     Output parameters:
-        device_setting    The settings of the instrument (using ZVL device class)
-        trace_setting     The settings of the trace (using ZVL trace class)
-        frequency         matrix (list) containing the frequency points
-        yval1             matrix (list) containing the measurement values
-        yval2             matrix (list) contining the smallest of the two values
-                          (only if AUTOPEAK is enabled, otherwise emtpy)
+        device_setting (list, ZNL_spectrum_setting_device): Settings of the instrument
+        trace_setting  (list, ZNL_spectrum_settings_one_trace): Settings of the trace
+        frequency (list): Contains the frequency points
+        yval1 (list): Contains the measured values
+        yval2 (list): Contains the smallest of the two measured values
+                      (only if AUTOPEAK is enabled, otherwise emtpy)
 '''
-def ZNL_spectrum_read_multrace(filename, filepath, autopeak):
+def ZNL_spectrum_read_multrace(filepath, filenames, autopeak):
     
     device_setting = []
     trace_setting = []
@@ -591,8 +629,8 @@ def ZNL_spectrum_read_multrace(filename, filepath, autopeak):
     yval1 = []
     yval2 = []  
     
-    for file in filename:
-        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = ZNL_spectrum_read_1trace(filepath + file, autopeak)
+    for file in filenames:
+        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = ZNL_spectrum_read_1trace(filepath, file, autopeak)
         device_setting.append(device_temp)
         trace_setting.append(trace_temp)
         frequency.append(frequency_temp)
@@ -603,27 +641,22 @@ def ZNL_spectrum_read_multrace(filename, filepath, autopeak):
 
 
 
-
-
-
-
-
-# Everything down there has to be reviewed and changed!
-
-
-
+###############################################################################
+############################ independent functions ############################
+###############################################################################
 
 '''
     This function plots multiple traces in one plot.
     
     Input Parameters:
-        frequency  frequency matrix, consisting of the time data vectors
-        yval       voltage matrix, consisting of the measured voltage vecotrs
-        title      string consisting the title of the plot
-        xlabel     string including the label of the x-axis
-        ylabel     string including the label of the y-axis
-        legend     vector of strings consisting of the legend
-        xfit       optional argument for the left and right xlim
+        frequency (list):  frequency points of different measurements
+        yval (list): measured values of differetn measurements
+        title (string): title of the plot
+        xlabel (string): label of the x-axis
+        ylabel (string): label of the y-axis
+        legend (list, string): legend entries
+        xfit (int): optional argument for the left and right xlim
+
         
     Output Parameters:
         NONE
@@ -645,10 +678,3 @@ def multiplot(frequency, yval, title, xlabel, ylabel, legend, xfit = None):
        
     plt.tight_layout()
     plt.show
-
-
-
-
-
-
-

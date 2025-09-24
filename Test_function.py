@@ -24,19 +24,21 @@ if __name__ =='__main__':
     
     # general definitions
     autopeak = 1
-    save_flag = 0
+    save_flag = 1
     
     
     # ZVL test definitions
     filepath_ZVL = 'Testdata/ZVL/Spectrum_Analyzer/'
-    filenames_ZVL = ['TESTDATA_ZVL_1.dat', 'TESTDATA_ZVL_2.dat']
+    filenames_ZVL = ['TESTDATA_ZVL-1.dat', 'TESTDATA_ZVL-2.dat']
     number_of_files_ZVL = len(filenames_ZVL)
+    file_range_ZVL = range(number_of_files_ZVL)
     
     
     # ZNL test definitions
     filepath_ZNL = 'Testdata/ZNL/Spectrum_Analyzer/'
-    filenames_ZNL = ['TESTDATA_ZNL.dat']
+    filenames_ZNL = ['TESTDATA_ZNL-1.dat']
     number_of_files_ZNL = len(filenames_ZNL)
+    file_range_ZNL = range(number_of_files_ZNL)
     
     
     
@@ -44,17 +46,17 @@ if __name__ =='__main__':
     ################################## Tests ##################################
     ###########################################################################
     
-    ##### ZVL single file test #####        
+    ########## ZVL single file test ##########        
     # extract the data from the file and store it in various variables
     device_setting_ZVL, trace_setting_ZVL, frequency_ZVL, yval1_ZVL, temp_yval2_ZVL = VNA.ZVL_spectrum_read_1trace(
-        filepath_ZVL + filenames_ZVL[0], autopeak)
+        filepath_ZVL, filenames_ZVL[0], autopeak)
     
     # Create plot
     fig = plt.figure()
 
     plt.semilogx(frequency_ZVL, yval1_ZVL)
         
-    plt.title(name)
+    plt.title(filenames_ZVL[0])
     plt.xlabel('Frequency in ' + trace_setting_ZVL.x_unit)
     plt.ylabel('Power in ' + trace_setting_ZVL.y_unit)
     plt.xlim(min(frequency_ZVL), max(frequency_ZVL))
@@ -65,12 +67,19 @@ if __name__ =='__main__':
     plt.show
     
     if save_flag == 1:
-        plt.savefig(name[:-4] + '_log.png')
+        plt.savefig(filenames_ZVL[0][:-4] + '_log.png')
+           
+    
+    ########## ZVL multi file test ##########    
+    device_setting_ZVL, trace_setting_ZVL, frequency_ZVL, yval1_ZVL, temp_yval2_ZVL = VNA.ZVL_spectrum_read_multrace(
+        filepath_ZVL, filenames_ZVL, autopeak)
+ 
+    # create plot
+    for cnt in file_range_ZVL:
+        print(cnt)
             
             
             
-            
-    #for name in filenames_ZVL:   
             
             
             
@@ -78,27 +87,26 @@ if __name__ =='__main__':
             
               
             
-    ### ZNL single file test ###
-    for name in filenames_ZNL:
-        
-        device_setting_ZNL, trace_setting_ZNL, frequency_ZNL, yval1_ZNL, yval2_ZNL = VNA.ZNL_spectrum_read_1trace(
-            filepath_ZNL + name, autopeak)
-        
-        # create individual plots
-        fig = plt.figure()
     
-        plt.semilogx(frequency_ZNL, yval1_ZNL)
-            
-        plt.title(name)
-        plt.xlabel('Frequency in Hz')
-        plt.ylabel('Power in ')
-        plt.xlim(min(frequency_ZNL), max(frequency_ZNL))
-        #plt.ylim(-10, 50)
-        plt.grid(which='both', axis='both')
-           
-        plt.tight_layout()
-        plt.show
+    ########## ZNL single file test ##########
+    device_setting_ZNL, trace_setting_ZNL, frequency_ZNL, yval1_ZNL, yval2_ZNL = VNA.ZNL_spectrum_read_1trace(
+        filepath_ZNL, filenames_ZNL[0], autopeak)
+    
+    # create individual plots
+    fig = plt.figure()
+
+    plt.semilogx(frequency_ZNL, yval1_ZNL)
         
-        if save_flag == 1:
-            plt.savefig(name[:-4] + '_log.png')
+    plt.title(filenames_ZNL[0])
+    plt.xlabel('Frequency in Hz')
+    plt.ylabel('Power in ')
+    plt.xlim(min(frequency_ZNL), max(frequency_ZNL))
+    #plt.ylim(-10, 50)
+    plt.grid(which='both', axis='both')
+       
+    plt.tight_layout()
+    plt.show
+    
+    if save_flag == 1:
+        plt.savefig(filenames_ZNL[0][:-4] + '_log.png')
             
