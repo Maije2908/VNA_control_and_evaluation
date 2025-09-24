@@ -42,9 +42,7 @@ ShowdB = False # Flag if results should be given in dB
     
     This function sets the global ShowCMD flag. The flag controls, if results
     will be shown in the command line. 
-'''
-#%%
-'''
+    
     Input Parameters:
         None
     
@@ -54,7 +52,7 @@ ShowdB = False # Flag if results should be given in dB
 def set_showCMD():
     global ShowCMD
     ShowCMD = True
-#%%
+
 
 
 '''
@@ -62,9 +60,7 @@ def set_showCMD():
     
     This function resets sets the global ShowCMD flag. The flag controls, if
     results will be shown in the command line. 
-'''
-#%%
-'''
+
     Input Parameters:
         None
     
@@ -74,7 +70,6 @@ def set_showCMD():
 def reset_showCMD():
     global ShowCMD
     ShowCMD = False
-#%%
 
 
 
@@ -88,9 +83,7 @@ def reset_showCMD():
     A class to allow easy access to the measurement settings of the ZVL in
     spectrum analyzer mode. The description of the attributes is taken from
     the ZVL-K1 manual (see: ASCII file export format).
-'''
-#%%
-'''
+    
     Attributes:
         dev_type (string): Instrument model
         version (string): Firmware version
@@ -174,7 +167,6 @@ class ZVL_spectrum_setting_device:
         self.trace_mode = trace_mode
         self.detector = detector
         self.sweep_cnt = int(sweep_cnt)
-#%%
 
 
 '''
@@ -182,9 +174,7 @@ class ZVL_spectrum_setting_device:
     
     A class to allow easy access to the trace settings of the Rohde und Schwarz
     ZVL for a one trace measurements.
-'''
-#%%
-'''
+
     Attributes:
         x_unit (string): Unit of the x values
         y_unit (string): Unit of the y values
@@ -203,7 +193,6 @@ class ZVL_spectrum_settings_one_trace:
         self.preamp = preamp
         self.transducer = transducer
         self.meas_number = int(meas_number)       
-#%%
 
 
 '''
@@ -213,9 +202,7 @@ class ZVL_spectrum_settings_one_trace:
     one trace. It uses the ZVL_spectrum_setting_device and  the
     ZVL_spectrum_setting_one_trace class to give the settings of the instrument
     and the settings of the trace.
-'''
-#%%
-'''  
+
     Input Parameters:
         filename (string): Filename (including path) of the .dat file
         autopeak (int): flag which indicates if the autopeak setting was set.
@@ -321,7 +308,6 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
             yval2.append(file_data[cnt][2])
                          
     return [device_setting, trace_setting, frequency, yval1, yval2]
-#%%
 
 
 
@@ -336,9 +322,7 @@ def ZVL_spectrum_read_1trace(filename, autopeak):
     spectrum analyzer mode. The description of the attributes is taken from
     the ZNL analog demodulation mode manual (see: 11.7.5 Reference: ASCII file
     export format).
-'''
-#%%%
-'''
+
     Attributes:
         dev_type (string): Instrument model
         version (string): Firmware version
@@ -389,8 +373,7 @@ class ZNL_spectrum_setting_device:
                  xAx_start_unit, xAx_stop, xAx_stop_unit, span, span_unit,
                  reflvl, reflvl_unit, offsetlvl, offsetlvl_unit, rfatt,
                  rfatt_unit, elatt, elatt_unit, RBW, RBW_unit, VBW, VBW_unit,
-                 SWT, SWT_unit, sweep_cnt, refpos, refpos_unit, rangelvl,
-                 rangelvl_unit, xAx_type, yAx_type, xAx_unit, yAx_unit):
+                 SWT, SWT_unit, sweep_cnt):
         
         self.dev_type = dev_type
         self.version = version
@@ -414,7 +397,7 @@ class ZNL_spectrum_setting_device:
         self.offsetlvl_unit = offsetlvl_unit
         self.rfatt = float(rfatt)
         self.rfatt_unit = rfatt_unit
-        self.elatt = elatt
+        self.elatt = float(elatt)
         self.elatt_unit = elatt_unit
         self.RBW = float(RBW)
         self.RBW_unit = RBW_unit
@@ -423,15 +406,6 @@ class ZNL_spectrum_setting_device:
         self.SWT = float(SWT)
         self.SWT_unit = SWT_unit
         self.sweep_cnt = int(sweep_cnt)
-        self.refpos = float(refpos)
-        self.refpos_unit = refpos_unit
-        self.rangelvl = float(rangelvl)
-        self.rangelvl_unit = rangelvl_unit
-        self.xAx_type = xAx_type
-        self.yAx_type = yAx_type
-        self.xAx_unit = xAx_unit
-        self.yax_unit = yAx_unit
-#%%
 
 
 '''
@@ -439,9 +413,7 @@ class ZNL_spectrum_setting_device:
     
     A class to allow easy access to the trace settings of the Rohe und Schwarz
     ZNL for a one trace measurements.
-'''
-#%%
-'''
+
     Attributes:
         trace (string): Selected trace
         trace_mode (string): Display mode of trace
@@ -452,13 +424,23 @@ class ZNL_spectrum_setting_device:
         None
 '''        
 class ZNL_spectrum_settings_one_trace:
-    def __init__(self, trace, trace_mode, detector, meas_number):
+    def __init__(self, window, refpos, refpos_unit, rangelvl, rangelvl_unit,
+                 xAx_type, yAx_type, xAx_unit, yAx_unit, trace, trace_mode,
+                 detector, meas_number):
         
+        self.window = window
+        self.refpos = float(refpos)
+        self.refpos_unit = refpos_unit
+        self.rangelvl = float(rangelvl)
+        self.rangelvl_unit = rangelvl_unit
+        self.xAx_type = xAx_type
+        self.yAx_type = yAx_type
+        self.xAx_unit = xAx_unit
+        self.yax_unit = yAx_unit
         self.trace = trace
         self.trace_mode = trace_mode
         self.detector = detector
         self.meas_number = int(meas_number)       
-#%%
 
 
 '''
@@ -468,9 +450,7 @@ class ZNL_spectrum_settings_one_trace:
     one trace. It uses the ZNL_spectrum_setting_device and  the
     ZNL_spectrum_setting_one_trace class to give the settings of the instrument
     and the settings of the trace.
-'''
-#%%
-'''  
+
     Input Parameters:
         filename (string): Filename (including path) of the .dat file
         autopeak (int): flag which indicates if the autopeak setting was set.
@@ -539,20 +519,21 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
     dev_SWT = file_header[17][1]
     dev_SWT_unit = file_header[17][2]
     dev_sweep_cnt = file_header[18][1]
-    dev_refpos = file_header[19][1]
-    dev_refpos_unit = file_header[19][2]
-    dev_rangelvl = file_header[20][1]
-    dev_rangelvl_unit = file_header[20][2]
-    dev_xAx_type = file_header[21][1]
-    dev_yAx_type = file_header[22][1]
-    dev_xAx_unit = file_header[23][1]
-    dev_yAx_unit = file_header[24][1]
     
     # store trace settings
-    tr_trace = file_header[25][1]
-    tr_trace_mode = file_header[26][1]
-    tr_detector = file_header[27][1]
-    tr_meas_number = file_header[28][1]
+    tr_window = file_header[19][1]
+    tr_refpos = file_header[20][1]
+    tr_refpos_unit = file_header[20][2]
+    tr_rangelvl = file_header[21][1]
+    tr_rangelvl_unit = file_header[21][2]
+    tr_xAx_type = file_header[22][1]
+    tr_yAx_type = file_header[23][1]
+    tr_xAx_unit = file_header[24][1]
+    tr_yAx_unit = file_header[25][1]
+    tr_trace = file_header[26][1]
+    tr_trace_mode = file_header[27][1]
+    tr_detector = file_header[28][1]
+    tr_meas_number = file_header[29][1]
     
     # There is a class for every device (and for all kinds of measurements).
     # Here, the assignment of the variables is done (Varies for every device).
@@ -564,12 +545,12 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
         dev_span, dev_span_unit, dev_reflvl, dev_reflvl_unit, dev_offsetlvl,
         dev_offsetlvl_unit, dev_rfatt, dev_rfatt_unit, dev_elatt,
         dev_elatt_unit, dev_RBW, dev_RBW_unit, dev_VBW, dev_VBW_unit, dev_SWT,
-        dev_SWT_unit, dev_sweep_cnt, dev_refpos, dev_refpos_unit, dev_rangelvl,
-        dev_rangelvl_unit, dev_xAx_type, dev_yAx_type, dev_xAx_unit,
-        dev_yAx_unit)
+        dev_SWT_unit, dev_sweep_cnt)
 
     trace_setting = ZNL_spectrum_settings_one_trace(
-        tr_trace, tr_trace_mode, tr_detector, tr_meas_number)
+        tr_window, tr_refpos, tr_refpos_unit, tr_rangelvl, tr_rangelvl_unit,
+        tr_xAx_type, tr_yAx_type, tr_xAx_unit, tr_yAx_unit, tr_trace,
+        tr_trace_mode, tr_detector, tr_meas_number)
     
     # Measured data is stored here in two (three if AUTOPEAK is set) separate lists.
     for cnt in range(len(file_data)):
@@ -580,7 +561,6 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
             yval2.append(file_data[cnt][2])
                          
     return [device_setting, trace_setting, frequency, yval1, yval2]
-#%%
 
 
 
