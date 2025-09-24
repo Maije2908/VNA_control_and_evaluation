@@ -36,7 +36,7 @@ if __name__ =='__main__':
     # ZNL test definitions
     filepath_ZNL = 'Testdata/ZNL/Spectrum_Analyzer/'
     filenames_ZNL = ['TESTDATA_ZNL.dat']
-    number_of_files_ZNL = len(filenames_ZVL)
+    number_of_files_ZNL = len(filenames_ZNL)
     
     
     
