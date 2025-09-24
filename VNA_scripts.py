@@ -564,14 +564,6 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
     return [device_setting, trace_setting, frequency, yval1, yval2]
 
 
-
-
-
-
-
-
-
-# Everything down there has to be reviewed and changed!
 '''
     This function takes the filename of multiple .dat file from a 1 trace
     spectrum analyzer measurement, extracts the data and stores them in a
@@ -591,7 +583,7 @@ def ZNL_spectrum_read_1trace(filename, autopeak):
         yval2             matrix (list) contining the smallest of the two values
                           (only if AUTOPEAK is enabled, otherwise emtpy)
 '''
-def mul_measurements_1ch(filename, filepath, autopeak):
+def ZNL_spectrum_read_multrace(filename, filepath, autopeak):
     
     device_setting = []
     trace_setting = []
@@ -600,7 +592,7 @@ def mul_measurements_1ch(filename, filepath, autopeak):
     yval2 = []  
     
     for file in filename:
-        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = ZVL_spectrum_read_1trace(filepath + file, autopeak)
+        [device_temp, trace_temp, frequency_temp, yval1_temp, yval2_temp] = ZNL_spectrum_read_1trace(filepath + file, autopeak)
         device_setting.append(device_temp)
         trace_setting.append(trace_temp)
         frequency.append(frequency_temp)
@@ -608,6 +600,16 @@ def mul_measurements_1ch(filename, filepath, autopeak):
         yval2.append(yval2_temp)
 
     return [device_setting, trace_setting, frequency, yval1, yval2]
+
+
+
+
+
+
+
+
+# Everything down there has to be reviewed and changed!
+
 
 
 
